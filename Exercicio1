@@ -1,0 +1,71 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Exercicio12
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Quantas cidades voce quer em sua tabela? ");
+            int.TryParse(Console.ReadLine(), out int tamanhoTabela);
+
+            int[,] distancias= new int[tamanhoTabela, tamanhoTabela];
+            Console.WriteLine("");
+
+            for(int i = 0; i<tamanhoTabela; i++)
+            {
+                distancias[i, i] = 0;
+
+                for(int j = 0; j < i; j++)
+                {
+                    Console.WriteLine($"Insira a distancia entre a cidade {i+1} e a cidade {j+1}");
+                    int.TryParse(Console.ReadLine(), out int distancia);
+
+                    distancias[i, j] = distancia;
+                    distancias[j, i] = distancias[i, j];
+                }
+            }
+
+            Console.WriteLine("");
+
+            int numeroCidadesPercurso;
+
+            do
+            {
+                Console.WriteLine("Insira o numero de cidades no seu percurso: ");
+                int.TryParse(Console.ReadLine(), out numeroCidadesPercurso);
+                if (numeroCidadesPercurso < 2)
+                    Console.WriteLine("O percurso deve possuir ao menos duas cidades! ");
+            } while (numeroCidadesPercurso < 2);
+
+            int[] cidadesPercurso = new int[numeroCidadesPercurso];
+
+            Console.WriteLine("Insira a cidade de onde voce ira iniciar o percurso: ");
+            int.TryParse(Console.ReadLine(), out int cidadeAnterior);
+            int proximaCidade;
+
+            int somaDistancias = 0;
+
+            for(int i = 1; i < numeroCidadesPercurso; i++)
+            {
+                do
+                {
+                    Console.WriteLine("Insira a proxima cidade do percurso: ");
+                    int.TryParse(Console.ReadLine(), out proximaCidade);
+                    if(proximaCidade == cidadeAnterior)
+                        Console.WriteLine("Voce ja esta nessa cidade! ");
+                } while (proximaCidade == cidadeAnterior);
+
+                somaDistancias += distancias[cidadeAnterior-1, proximaCidade-1];
+                cidadeAnterior = proximaCidade;
+            }
+
+            Console.WriteLine($"A distancia total percorrida nesse percurso e de {somaDistancias}km");
+            Console.ReadKey();
+        }
+    }
+}
