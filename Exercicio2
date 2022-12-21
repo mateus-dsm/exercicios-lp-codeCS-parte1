@@ -1,0 +1,44 @@
+using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Exercicio2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            string pathDesktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string pathMatriz = Path.Combine(pathDesktop, "matriz.txt");
+            string pathCaminho = Path.Combine(pathDesktop, "caminho.txt");
+
+            using var readerMatriz = new StreamReader(pathMatriz);
+            string[] primeiraLinha = readerMatriz.ReadLine().Split(',');
+
+            int[][] distancias = new int[primeiraLinha.Length][];
+            distancias[0] = primeiraLinha.Select(int.Parse).ToArray();
+
+            for (int i = 1; i < primeiraLinha.Length; i++)
+            {
+                string[] linhaMatriz = readerMatriz.ReadLine().Split(',');
+                distancias[i] = linhaMatriz.Select(int.Parse).ToArray();
+            }
+
+            var readerCaminho = new StreamReader(pathCaminho);
+            string[] stringCidades = readerCaminho.ReadLine().Split(',');
+            int[] cidadesPercurso = stringCidades.Select(int.Parse).ToArray();
+            int somaDistancias = 0;
+
+            for (int j = 1; j < cidadesPercurso.Length; j++)
+            {
+                somaDistancias += distancias[cidadesPercurso[j - 1] - 1][cidadesPercurso[j] - 1];
+            }
+
+            Console.WriteLine($"A distancia total percorrida nesse percurso e de {somaDistancias}km");
+            Console.ReadKey();
+        }
+    }
+}
