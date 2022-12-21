@@ -1,0 +1,63 @@
+using CsvHelper.Configuration;
+using CsvHelper;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Runtime.InteropServices;
+using System.Formats.Asn1;
+
+namespace Exercicio3
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                HasHeaderRecord = false,
+            };
+
+            string pathDesktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string pathMatriz = Path.Combine(pathDesktop, "matriz.txt");
+            string pathCaminho = Path.Combine(pathDesktop, "caminho.txt");
+
+            using var readerMatriz = new StreamReader(pathMatriz);
+            using var csvMatriz = new CsvParser(readerMatriz, config);
+
+            int i = 1;
+            int somaDistancias = 0;
+
+            csvMatriz.Read();
+            var primeiraLinha = csvMatriz.Record;
+            int[][] distancias = new int[primeiraLinha.Length][];
+            distancias[0] = primeiraLinha.Select(int.Parse).ToArray();
+
+            while (csvMatriz.Read())
+            {
+                var linhaMatriz = csvMatriz.Record;
+                distancias[i] = linhaMatriz.Select(int.Parse).ToArray();
+                i++;
+            }
+
+            using (var readerCaminho = new StreamReader(pathCaminho))
+            using (var csvCaminho = new CsvParser(readerCaminho, config))
+            {
+                csvCaminho.Read();
+                var linhaCaminho = csvCaminho.Record;
+                int[] cidadesPercurso = linhaCaminho.Select(int.Parse).ToArray();
+
+                for (int j = 1; j < cidadesPercurso.Length; j++)
+                {
+                    somaDistancias += distancias[cidadesPercurso[j - 1] - 1][cidadesPercurso[j] - 1];
+                }
+
+                Console.WriteLine($"A distancia total percorrida nesse percurso e de {somaDistancias}km");
+                Console.ReadKey();
+            }
+        }
+    }
+}
